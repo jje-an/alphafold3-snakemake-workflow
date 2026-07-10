@@ -1,0 +1,33 @@
+mode: "separate" # separate, together, pairwise_one, or pairwise_two.
+
+#shared
+jprefix: 80
+jcpu: 8
+jgpu: 1
+jmem: 32
+jwalltime: "4:00:00"
+delimiter: ":"
+
+#mode specific
+
+separate:
+  jmem: 36
+  jwalltime: "12:00:00"
+  keys: "transcript"
+  species: "hg38_115"
+  idfile: "tp53.txt"
+  libpath: "/beacon-projects/hp_ppi/libraries"
+  libtype: "protein"
+  species_aa: ""
+
+pairwise_two:
+  jmem: 36
+  jwalltime: "12:00:00"
+  keys: "transcript:transcript"
+  species: "hg38_115:hg38_115"
+  idfile1: "tp53.txt"
+  idfile2: "mdm2.txt"
+  libpath: "/beacon-projects/hp_ppi/libraries"
+  libtype: "protein"
+  species1_aa: ""
+  species2_aa: ""
