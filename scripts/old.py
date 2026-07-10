@@ -34,27 +34,16 @@ def extract_sequence(fasta_path, seq_id, key, out_path):
     with open(out_path, "w") as out_fh:
         SeqIO.write(record, out_fh, "fasta")
         
-def build_alphafold_json(out_path, seq1_record, seq2_record=None, molecule_type="protein"):
-    if seq2_record:
-        datum = {
-            "name": f"{seq1_record.id}_{seq2_record.id}",
-            "modelSeeds": [1],
-            "dialect": "alphafold3",
-            "version": 1,
-            "sequences": [
-                {molecule_type: {"id": ["A"], "sequence": str(seq1_record.seq)}},
-                {molecule_type: {"id": ["B"], "sequence": str(seq2_record.seq)}},
-            ],
-        }
-    else:
-        datum = {
-            "name": f"{seq1_record.id}",
-            "modelSeeds": [1],
-            "dialect": "alphafold3",
-            "version": 1,
-            "sequences": [
-                {molecule_type: {"id": ["A"], "sequence": str(seq1_record.seq)}}
-            ],
-        }
+def build_alphafold_json(seq1_record, seq2_record, out_path, molecule_type="protein"):
+    datum = {
+        "name": f"{seq1_record.id}_{seq2_record.id}",
+        "modelSeeds": [1],
+        "dialect": "alphafold3",
+        "version": 1,
+        "sequences": [
+            {molecule_type: {"id": ["A"], "sequence": str(seq1_record.seq)}},
+            {molecule_type: {"id": ["B"], "sequence": str(seq2_record.seq)}},
+        ],
+    }
     with open(out_path, "w") as f:
         json.dump(datum, f, indent=2)
