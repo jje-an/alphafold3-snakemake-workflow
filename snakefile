@@ -1,6 +1,6 @@
 import sys, os
 sys.path.append("scripts")
-from protein_fold_lib import get_sequence, get_sequence_pair, build_alphafold_json
+from protein_fold_lib import fasta_to_hash, build_alphafold_json
 
 from Bio import SeqIO
 
@@ -17,8 +17,10 @@ if MODE == "separate":
     sp = cfg["species"]
     key = cfg["keys"]
     species_aa = cfg["species_aa"] or f'{cfg["libpath"]}/{cfg["libtype"]}/fasta/{sp}.fasta'
+    with open(species_aa, "r") as fh:
+        s_hash = fasta_to_hash(fh, key)
     IDS = [line.strip() for line in open(cfg["idfile"]) if line.strip()]
-    TARGETS = [f"results/separate/{seqid}.cif" for seqid in IDS]
+    TARGETS = [f"results/separate/{seqid}/{seqid}_model.cif" for seqid in IDS]
 
 
 elif MODE == "pairwise_two":
@@ -27,10 +29,14 @@ elif MODE == "pairwise_two":
     key1, key2 = cfg["keys"].split(config["delimiter"])
     species1_aa = cfg["species1_aa"] or f'{cfg["libpath"]}/{cfg["libtype"]}/fasta/{sp1}.fasta'
     species2_aa = cfg["species2_aa"] or f'{cfg["libpath"]}/{cfg["libtype"]}/fasta/{sp2}.fasta'
+    with open(species1_aa, "r") as fh1:
+        s1_hash = fasta_to_hash(fh1, key1)
+    with open(species2_aa, "r") as fh2:
+        s2_hash = fasta_to_hash(fh2, key2)
     IDS1 = [line.strip() for line in open(cfg["idfile1"]) if line.strip()]
     IDS2 = [line.strip() for line in open(cfg["idfile2"]) if line.strip()]
     PAIRS = sorted({tuple(sorted((a, b))) for a in IDS1 for b in IDS2})
-    TARGETS = [f"results/pairs/{a}/{b}/{a}_{b}.cif" for a, b in PAIRS]
+    TARGETS = [f"results/pairs/{a}/{b}/{a}_{b}/{a}_{b}_model.cif" for a, b in PAIRS]
 
 
 else:
@@ -39,27 +45,23 @@ else:
 rule all:
     input:
         TARGETS
+        
 
 #separate
 
 rule build_json:
     output:
-        "results/separate/{seqid}.json"
+        "results/separate/{seqid}/{seqid}.json"
     run:
-        cfg = config["separate"]
-        sp = cfg["species"]
-        key = cfg["keys"]
-        species_aa = cfg["species_aa"] or f'{cfg["libpath"]}/{cfg["libtype"]}/fasta/{sp}.fasta'
-        
-        get_sequence(species_aa, key, wildcards.seqid, output[0])
+        build_alphafold_json(output[0], s_hash[wildcards.seqid])
 
 rule fold_separate:
     input:
-        json="results/separate/{seqid}.json"
+        json="results/separate/{seqid}/{seqid}.json"
     output:
-        cif="results/separate/{seqid}.cif"
+        cif="results/separate/{seqid}/{seqid}_model.cif"
     params:
-        final_dir="results/separate",
+        final_dir="results/separate/{seqid}",
         id_string="{seqid}"
     resources:
         gpu=config["jgpu"],
@@ -102,19 +104,16 @@ rule build_pair_json:
     output:
         "results/pairs/{first}/{second}/{first}_{second}.json"
     run:
-        cfg = config["pairwise_two"]
-        sp1, sp2 = cfg["species"].split(config["delimiter"])
-        key1, key2 = cfg["keys"].split(config["delimiter"])
-        species1_aa = cfg["species1_aa"] or f'{cfg["libpath"]}/{cfg["libtype"]}/fasta/{sp1}.fasta'
-        species2_aa = cfg["species2_aa"] or f'{cfg["libpath"]}/{cfg["libtype"]}/fasta/{sp2}.fasta'
-        
-        get_sequence(species1_aa, species2_aa, key1, key2, wildcards.first, wildcards.second, output[0])
+        s1 = s1_hash[wildcards.first]
+        s2 = s2_hash[wildcards.second]
+
+        build_alphafold_json(output[0], s1, seq2_record=s2)
 
 rule fold_pairwise:
     input:
         json="results/pairs/{first}/{second}/{first}_{second}.json"
     output:
-        cif="results/pairs/{first}/{second}/{first}_{second}.cif"
+        cif="results/pairs/{first}/{second}/{first}_{second}/{first}_{second}_model.cif"
     params:
         final_dir="results/pairs/{first}/{second}",
         id_string="{first}_{second}"

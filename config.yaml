@@ -1,4 +1,4 @@
-mode: "separate" # separate, together, pairwise_one, or pairwise_two.
+mode: "pairwise_two" # separate, together, pairwise_one, or pairwise_two.
 
 #shared
 jprefix: 80
