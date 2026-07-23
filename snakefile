@@ -35,7 +35,7 @@ elif MODE == "pairwise_two":
         s2_hash = fasta_to_hash(fh2, key2)
     IDS1 = [line.strip() for line in open(cfg["idfile1"]) if line.strip()]
     IDS2 = [line.strip() for line in open(cfg["idfile2"]) if line.strip()]
-    PAIRS = sorted({tuple(sorted((a, b))) for a in IDS1 for b in IDS2})
+    PAIRS = sorted({tuple((a, b)) for a in IDS1 for b in IDS2})
     TARGETS = [f"results/pairs/{a}/{b}/{a}_{b}/{a}_{b}_model.cif" for a, b in PAIRS]
 
 
