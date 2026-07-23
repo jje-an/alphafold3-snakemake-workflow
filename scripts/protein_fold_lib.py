@@ -3,7 +3,7 @@ import json
 import os
 from Bio import SeqIO
 
-
+# these should be really similar to parts of Bio::Adventure::Structure
 def fasta_to_hash(file_handle, key):
     output = {}
 

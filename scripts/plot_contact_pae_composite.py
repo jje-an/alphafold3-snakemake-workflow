@@ -6,6 +6,8 @@ import json
 import sys
 import matplotlib.pyplot as plt
 
+
+
 def plot_contact_pae_composite(input_dir=None, output_dir=None):
     if input_dir is None:
         input_dir = os.getcwd()

@@ -11,7 +11,7 @@ def plot_pae_matrix(input_dir=None, output_dir=None):
     if output_dir is None:
         output_dir = os.getcwd()
     os.makedirs(output_dir, exist_ok=True)
-    files = sorted(f for f in glob.glob(f"{input_dir}/*confidences.json") 
+    files = sorted(f for f in glob.glob(f"{input_dir}/*/*/*/*confidences.json") 
                    if not f.endswith("summary_confidences.json"))
     
     
