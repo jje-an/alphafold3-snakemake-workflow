@@ -13,7 +13,7 @@ separate:
   # species name matching library filename
   species: "hg38_115"
   #input file name
-  idfile: "inputs/mdm2.txt"
+  idfile: "inputs/tp53.txt"
 
 pairwise:
   # key names in the format "key1:key2"
