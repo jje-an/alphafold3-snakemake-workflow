@@ -1,33 +1,29 @@
-mode: "pairwise_two" # separate, together, pairwise_one, or pairwise_two.
+mode: "pairwise_two" # separate, or pairwise_two.
 
 #shared
-jprefix: 80
 jcpu: 8
 jgpu: 1
-jmem: 32
-jwalltime: "4:00:00"
-delimiter: ":"
+jmem: 36
+jwalltime: "12:00:00"
+library_path: "/beacon-projects/hp_ppi/libraries/protein/fasta"
 
 #mode specific
-
 separate:
-  jmem: 36
-  jwalltime: "12:00:00"
   keys: "transcript"
+  # species name matching library filename
   species: "hg38_115"
-  idfile: "tp53.txt"
-  libpath: "/beacon-projects/hp_ppi/libraries"
-  libtype: "protein"
-  species_aa: ""
+  #input file name
+  idfile: "mdm2.txt"
 
 pairwise_two:
-  jmem: 36
-  jwalltime: "12:00:00"
+  # key names in the format "key1:key2"
   keys: "transcript:transcript"
+  # species names matching library filename in the format "species1:species2"
   species: "hg38_115:hg38_115"
-  idfile1: "tp53.txt"
-  idfile2: "mdm2.txt"
-  libpath: "/beacon-projects/hp_ppi/libraries"
-  libtype: "protein"
-  species1_aa: ""
-  species2_aa: ""
+  # input file names
+  idfile1: "hsapiens_known_interactors1.txt"
+  idfile2: "hsapiens_known_interactors2.txt"
+  # optional, if empty, it will use the libpath instead.
+  # use if two species have different library paths.
+  species1_libpath: ""
+  species2_libpath: ""
