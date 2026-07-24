@@ -24,9 +24,9 @@ if MODE == "separate":
     # identify all output files
     TARGETS = [f"results/separate/{seqid}/{seqid}_model.cif" for seqid in IDS]
 
-elif MODE == "pairwise_two":
+elif MODE == "pairwise":
     # get config values
-    mode_cfg = config["pairwise_two"]
+    mode_cfg = config["pairwise"]
     sp1, sp2 = mode_cfg["species"].split(":")
     key1, key2 = mode_cfg["keys"].split(":")
     species1_aa = mode_cfg["species1_libpath"] or f'{config["library_path"]}/{sp1}.fasta'
@@ -100,7 +100,7 @@ rule fold_separate:
         """
 
 
-#pairwise_two
+#pairwise
 
 rule build_pair_json:
     output:

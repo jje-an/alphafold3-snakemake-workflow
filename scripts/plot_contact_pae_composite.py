@@ -6,7 +6,7 @@ import json
 import sys
 import matplotlib.pyplot as plt
 
-# creates plot emphasizing atoms that the model thinks are in acontact regions and also has a low PAE.
+# creates plot emphasizing atoms that the model thinks are in contact regions and also has a low PAE.
 
 def plot_contact_pae_composite(input_dir=None, output_dir=None):
     if input_dir is None:

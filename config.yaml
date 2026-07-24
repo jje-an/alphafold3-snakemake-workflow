@@ -1,4 +1,4 @@
-mode: "pairwise_two" # separate, or pairwise_two.
+mode: "pairwise" # separate, or pairwise
 
 #shared
 jcpu: 8
@@ -13,16 +13,16 @@ separate:
   # species name matching library filename
   species: "hg38_115"
   #input file name
-  idfile: "mdm2.txt"
+  idfile: "inputs/mdm2.txt"
 
-pairwise_two:
+pairwise:
   # key names in the format "key1:key2"
   keys: "transcript:transcript"
   # species names matching library filename in the format "species1:species2"
   species: "hg38_115:hg38_115"
   # input file names
-  idfile1: "hsapiens_known_interactors1.txt"
-  idfile2: "hsapiens_known_interactors2.txt"
+  idfile1: "inputs/hsapiens_known_interactors1.txt"
+  idfile2: "inputs/hsapiens_known_interactors2.txt"
   # optional, if empty, it will use the libpath instead.
   # use if two species have different library paths.
   species1_libpath: ""
