@@ -1,4 +1,5 @@
 *.snakemake
 scripts/__pycache__/
+*.pyc
 tmp/
 old_results/
