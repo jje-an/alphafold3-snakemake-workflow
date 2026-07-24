@@ -13,31 +13,35 @@ def runtime_minutes(hms):
     return h * 60 + m + (1 if s else 0)
 
 if MODE == "separate": 
-    cfg = config["separate"]
-    sp = cfg["species"]
-    key = cfg["keys"]
-    species_aa = cfg["species_aa"] or f'{cfg["libpath"]}/{cfg["libtype"]}/fasta/{sp}.fasta'
+    # get config values
+    mode_cfg = config["separate"]
+    sp = mode_cfg["species"]
+    key = mode_cfg["keys"]
+    species_aa = f'{config["library_path"]}/{sp}.fasta'
+    # convert fasta files into hash tables
     with open(species_aa, "r") as fh:
         s_hash = fasta_to_hash(fh, key)
-    IDS = [line.strip() for line in open(cfg["idfile"]) if line.strip()]
+    IDS = [line.strip() for line in open(mode_cfg["idfile"]) if line.strip()]
+    # identify all output files
     TARGETS = [f"results/separate/{seqid}/{seqid}_model.cif" for seqid in IDS]
 
-
 elif MODE == "pairwise_two":
-    cfg = config["pairwise_two"]
-    sp1, sp2 = cfg["species"].split(config["delimiter"])
-    key1, key2 = cfg["keys"].split(config["delimiter"])
-    species1_aa = cfg["species1_aa"] or f'{cfg["libpath"]}/{cfg["libtype"]}/fasta/{sp1}.fasta'
-    species2_aa = cfg["species2_aa"] or f'{cfg["libpath"]}/{cfg["libtype"]}/fasta/{sp2}.fasta'
+    # get config values
+    mode_cfg = config["pairwise_two"]
+    sp1, sp2 = mode_cfg["species"].split(":")
+    key1, key2 = mode_cfg["keys"].split(":")
+    species1_aa = mode_cfg["species1_libpath"] or f'{config["library_path"]}/{sp1}.fasta'
+    species2_aa = mode_cfg["species2_libpath"] or f'{config["library_path"]}/{sp2}.fasta'
+    # convert fasta files into hash tables
     with open(species1_aa, "r") as fh1:
         s1_hash = fasta_to_hash(fh1, key1)
     with open(species2_aa, "r") as fh2:
         s2_hash = fasta_to_hash(fh2, key2)
-    IDS1 = [line.strip() for line in open(cfg["idfile1"]) if line.strip()]
-    IDS2 = [line.strip() for line in open(cfg["idfile2"]) if line.strip()]
+    IDS1 = [line.strip() for line in open(mode_cfg["idfile1"]) if line.strip()]
+    IDS2 = [line.strip() for line in open(mode_cfg["idfile2"]) if line.strip()]
     PAIRS = sorted({tuple((a, b)) for a in IDS1 for b in IDS2})
+    # identify all output files
     TARGETS = [f"results/pairs/{a}/{b}/{a}_{b}/{a}_{b}_model.cif" for a, b in PAIRS]
-
 
 else:
     raise ValueError(f"Unknown mode: {MODE}")
@@ -45,15 +49,14 @@ else:
 rule all:
     input:
         TARGETS
-        
 
 #separate
 
 rule build_json:
     output:
-        "results/separate/{seqid}/{seqid}.json"
+        json="results/separate/{seqid}/{seqid}.json"
     run:
-        build_alphafold_json(output[0], s_hash[wildcards.seqid])
+        build_alphafold_json(output.json, s_hash[wildcards.seqid])
 
 rule fold_separate:
     input:
@@ -65,8 +68,8 @@ rule fold_separate:
         id_string="{seqid}"
     resources:
         gpu=config["jgpu"],
-        mem_mb=config.get("separate", {}).get("jmem", config["jmem"]) * 1000,
-        runtime=runtime_minutes(config.get("separate", {}).get("jwalltime", config["jwalltime"])),
+        mem_mb=config["jmem"] * 1000,
+        runtime=runtime_minutes(config["jwalltime"]),
         cpus_per_task=config["jcpu"]
     shell:
         """
@@ -102,12 +105,12 @@ rule fold_separate:
 
 rule build_pair_json:
     output:
-        "results/pairs/{first}/{second}/{first}_{second}.json"
+        json="results/pairs/{first}/{second}/{first}_{second}.json"
     run:
         s1 = s1_hash[wildcards.first]
         s2 = s2_hash[wildcards.second]
 
-        build_alphafold_json(output[0], s1, seq2_record=s2)
+        build_alphafold_json(output.json, s1, seq2_record=s2)
 
 rule fold_pairwise:
     input:
@@ -119,8 +122,8 @@ rule fold_pairwise:
         id_string="{first}_{second}"
     resources:
         gpu=config["jgpu"],
-        mem_mb=config.get("pairwise_two", {}).get("jmem", config["jmem"]) * 1000,
-        runtime=runtime_minutes(config.get("pairwise_two", {}).get("jwalltime", config["jwalltime"])),
+        mem_mb=config["jmem"] * 1000,
+        runtime=runtime_minutes(config["jwalltime"]),
         cpus_per_task=config["jcpu"]
     shell:
         """
