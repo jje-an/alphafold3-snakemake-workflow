@@ -6,7 +6,7 @@ import json
 import sys
 import matplotlib.pyplot as plt
 
-
+# creates plot emphasizing atoms that the model thinks are in acontact regions and also has a low PAE.
 
 def plot_contact_pae_composite(input_dir=None, output_dir=None):
     if input_dir is None:
@@ -14,6 +14,7 @@ def plot_contact_pae_composite(input_dir=None, output_dir=None):
     if output_dir is None:
         output_dir = os.getcwd()
     os.makedirs(output_dir, exist_ok=True)
+    
     files = sorted(f for f in glob.glob(f"{input_dir}/*/*/*/*confidences.json") 
                    if not f.endswith("summary_confidences.json"))
     

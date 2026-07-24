@@ -13,8 +13,7 @@ def plot_pae_matrix(input_dir=None, output_dir=None):
     os.makedirs(output_dir, exist_ok=True)
     files = sorted(f for f in glob.glob(f"{input_dir}/*/*/*/*confidences.json") 
                    if not f.endswith("summary_confidences.json"))
-    
-    
+
     for file in files:
         with open(file, "r") as f:
             data = json.load(f)

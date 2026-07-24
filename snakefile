@@ -1,7 +1,6 @@
 import sys, os
 sys.path.append("scripts")
 from protein_fold_lib import fasta_to_hash, build_alphafold_json
-
 from Bio import SeqIO
 
 configfile: "config.yaml"

@@ -66,7 +66,7 @@ def af3_summaries_to_csv(input_dir=None, output_csv="af3_summary.csv"):
         for key in row:
             if key not in fieldnames:
                 fieldnames.append(key)
-
+    # write data to csv
     with open(output_csv, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
