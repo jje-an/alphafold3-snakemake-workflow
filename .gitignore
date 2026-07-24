@@ -1,4 +1,4 @@
 *.snakemake
-__pycache__/
+*__pycache__/
 tmp/
 old_results/
