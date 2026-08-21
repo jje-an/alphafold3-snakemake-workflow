@@ -19,7 +19,7 @@ Configuration options are specified in `config.yaml`, where you can specify the 
 
 ## Usage
 
-It is reccommended to run the snakemake command in a terminal multiplexer such as Tmux or screen so that the execution will not be canceled if SSH connection drops.
+It is recommended to run the snakemake command in a terminal multiplexer such as Tmux or screen so that the execution will not be canceled if SSH connection drops.
 Do a dry run first to check for errors and ensure correct target files.
 
 ```bash
